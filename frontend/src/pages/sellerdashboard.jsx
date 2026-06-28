@@ -143,7 +143,6 @@ export default function SellerDashboard({ myItem: initialItems = [] }) {
             <label className={`mb-2 block text-sm font-semibold ${dm.heading}`}>Choose category</label>
             <select name="section" value={form.section} onChange={handleChange} required className={inputCls}>
               <option value="" disabled>Please select</option>
-              <option value="assignment">Assignment</option>
               <option value="furniture">Furniture</option>
               <option value="appliance">Appliance</option>
               <option value="book">Books</option>

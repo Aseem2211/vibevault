@@ -43,8 +43,8 @@ app.use(session({
     }),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
-        sameSite: "lax",
-        secure:false,
+        sameSite: "none",
+        secure:true,
         httpOnly:true
     }
 }));
@@ -82,6 +82,13 @@ const publicPaths = [
     '/api/changepassword/verifyotp',
     '/api/changepassword/old',
     '/api/search',
+    '/api/books',
+    '/api/appliances',
+    '/api/clothes',
+    '/api/furniture',
+    '/api/snacks',
+    '/api/stationary',
+    '/api/rent',
 ];
 app.use((req, res, next) => {
     if (req.method === 'OPTIONS') return next();
