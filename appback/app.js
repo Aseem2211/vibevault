@@ -70,7 +70,6 @@ app.delete('/api/profile/delete', async (req, res) => {
   req.session.destroy();
   res.json({ message: "Account deleted" });
 });
-
 const publicPaths = [
     '/api/login',
     '/api/logout',
@@ -89,15 +88,16 @@ const publicPaths = [
     '/api/snacks',
     '/api/stationary',
     '/api/rent',
+    '/api/detailpage',
 ];
+
 app.use((req, res, next) => {
     if (req.method === 'OPTIONS') return next();
-    const isPublic = publicPaths.includes(req.path);
+    const isPublic = publicPaths.some(p => req.path.startsWith(p));
     const isLoggedIn = req.session?.isLoggedIn;
     if (isLoggedIn || isPublic) return next();
     return res.status(401).json({ success: false, message: 'Not authenticated' });
 });
-
 
 app.use((req, res, next) => {
     console.log(req.method, req.path); 
