@@ -21,6 +21,7 @@ const mongoose  = require('mongoose');
 const cartrouter = require("./customer/router/cartrouter.js");
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+console.log(require('connect-mongo/package.json').version);
 const loginrouter = require("./customer/auth/loginrouter.js");
 const orderrouter=require("./customer/router/orderrouter.js");
 const pagerouter=require("./customer/router/detailpagerouter.js");
