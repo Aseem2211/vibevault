@@ -40,6 +40,7 @@ exports.viewCart = async (req, res) => {
             const obj = c.toObject();
             if (obj.item?.image?.data) {
                 const buffer = Buffer.from(obj.item.image.data);
+                console.log("B64 PREFIX:", `data:image/jpeg;base64,${b64}`.slice(0, 100))
                 obj.item.image = `data:image/jpeg;base64,${buffer.toString('base64')}`;
             }
             
