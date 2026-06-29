@@ -74,7 +74,7 @@ export const updateProfile = (data) => api.post("/api/profile/update", data);
 export const updateItem  = (id, formData) => api.post(`/api/item/edit/${id}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
 export const deleteItem  = (id) => api.post(`/api/item/delete/${id}`);
 export const getEditItem = (id) => api.get(`/api/item/edit/${id}`);
-
+export const getSellerEditItem = (id) => api.get(`/api/sell/edit/${id}`);
 
 export const addRentItem    = (formData) => api.post("/api/register/rent", formData, { headers: { "Content-Type": "multipart/form-data" } });
 export const getRentItemById=(id)=>api.get(`/api/rent/${id}`);

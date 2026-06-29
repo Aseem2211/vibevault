@@ -168,6 +168,7 @@ exports.getChangepassword=(req,res,next)=>{
 
 };
 exports.sendotp = async (req, res) => {
+    console.log("sendotp session:", req.session.pendingUserId, req.session.user?._id);
     try {
         const { method ,email} = req.body; 
         const userId=req.session.pendingUserId||req.session.user?._id;  
@@ -209,7 +210,8 @@ exports.sendotp = async (req, res) => {
         }
 
     } catch (err) {
-        res.status(500).json({message:"Invalid method"});
+        console.log("sending error:",err);
+        res.status(500).json({message:err.message});
     }
 };
 exports.verifyotp = async (req, res) => {

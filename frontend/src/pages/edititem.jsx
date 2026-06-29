@@ -53,24 +53,45 @@ export default function EditItem() {
     "w-full rounded-3xl border px-4 py-4 outline-none transition focus:ring-4",
     dm.input,
   ].join(" ");
+  const { role } = useAuth();
 
   useEffect(() => {
-    getEditItem(id)
-      .then((res) => {
-        const item = res.data.item;
-        setFormData({
-          section: item.section || "",
-          name: item.name || "",
-          price: item.price || "",
-          age: item.age || "New",
-          description: item.description || "",
-        });
-        setCurrentImage(item.image || null);
-      })
-      .catch((err) => console.error("Failed to load item:", err))
-      .finally(() => setLoading(false));
+      const fetchFn = role === 'admin' ? getEditItem : getSellerEditItem;
+      fetchFn(id)
+          .then((res) => {
+              const item = res.data.item;
+              setFormData({
+                  section: item.section || "",
+                  name: item.name || "",
+                  price: item.price || "",
+                  age: item.age || "New",
+                  description: item.description || "",
+              });
+              
+              setCurrentImage(item.image || null);
+          })
+          .catch((err) => console.error("Failed to load item:", err))
+          .finally(() => setLoading(false));
   }, [id]);
 
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      setSaving(true);
+      setError(null);
+      try {
+          const data = new FormData();
+          Object.entries(formData).forEach(([k, v]) => data.append(k, v));
+          if (newImageFile) data.append("image", newImageFile);
+          const submitFn = role === 'admin' ? updateItem : updateSellItem;
+          await submitFn(id, data);
+          navigate(-1);
+      } catch {
+          setError("Failed to save changes. Please try again.");
+      } finally {
+          setSaving(false);
+      }
+  };
+ 
   const handleChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
@@ -83,22 +104,7 @@ export default function EditItem() {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setError(null);
-    try {
-      const data = new FormData();
-      Object.entries(formData).forEach(([k, v]) => data.append(k, v));
-      if (newImageFile) data.append("image", newImageFile);
-      await updateItem(id, data);
-      navigate(-1);
-    } catch {
-      setError("Failed to save changes. Please try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
+
 
   if (loading) {
     return (

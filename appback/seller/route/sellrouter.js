@@ -20,7 +20,41 @@ const upload = multer({
         }
     }
 });
+sellrouter.get('/sell/edit/:id', async (req, res) => {
+    try {
+        const item = await Item.findOne({
+            _id: req.params.id,
+            seller: new mongoose.Types.ObjectId(req.session.user._id)
+        });
+        if (!item) return res.status(404).json({ message: 'Item not found or unauthorized' });
+        const image = item.image
+            ? `data:image/jpeg;base64,${item.image.toString('base64')}`
+            : null;
+        res.json({ success: true, item: { ...item._doc, image } });
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching item' });
+    }
+});
 
+sellrouter.post('/sell/edit/:id', upload.single('image'), async (req, res) => {
+    try {
+        const item = await Item.findOne({
+            _id: req.params.id,
+            seller: new mongoose.Types.ObjectId(req.session.user._id)
+        });
+        if (!item) return res.status(404).json({ message: 'Item not found or unauthorized' });
+        item.name = req.body.name;
+        item.price = req.body.price;
+        item.age = req.body.age;
+        item.description = req.body.description;
+        item.section = req.body.section;
+        if (req.file) item.image = req.file.buffer;
+        await item.save();
+        res.json({ success: true, message: 'Item updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating item' });
+    }
+});
 
 
 sellrouter.get("/sell", async (req, res) => {
