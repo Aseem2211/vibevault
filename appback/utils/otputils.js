@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const twilio     = require('twilio');
 const transporter = nodemailer.createTransport({
-    host:'smpt.gmail.com',
+    host:'smtp.gmail.com',
     port:587,
     secure:false,
     family:4,
