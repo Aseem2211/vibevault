@@ -42,7 +42,7 @@ export default function Cart() {
   useEffect(() => {
     getCart()
       .then((res) => {
-        console.log(res.data.cartitems?.[0]?.item);
+        console.log(res.data.cartitems?.[0]?.item?.image?.slice(0,6));
         setCartItems(res.data.cartitems || []);
         setTotal(res.data.total || 0);
       })

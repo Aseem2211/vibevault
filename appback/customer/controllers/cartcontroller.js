@@ -45,7 +45,7 @@ exports.viewCart = async (req, res) => {
             }
             return cartObj;
         });
-
+        console.log("CONVERTED IMAGE:", converted[0]?.item?.image?.slice(0, 60));
         res.json({ cartitems: converted, total });
     } catch (err) {
         console.log(err);
