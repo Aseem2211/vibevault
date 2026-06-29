@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const cors=require('cors');
+app.set("trust proxy",1);
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
@@ -19,7 +20,7 @@ const { sellrouter } = require("./seller/route/sellrouter.js");
 const { default: mongoose } = require('mongoose');
 const cartrouter = require("./customer/router/cartrouter.js");
 const session = require('express-session');
-const MongoStore = require('connect-mongo').default||require('connect-mongo');
+const MongoStore = require('connect-mongo');
 const loginrouter = require("./customer/auth/loginrouter.js");
 const orderrouter=require("./customer/router/orderrouter.js");
 const pagerouter=require("./customer/router/detailpagerouter.js");
@@ -49,7 +50,13 @@ app.use(session({
     }
 }));
 
-
+app.get('/api/debug-session', (req, res) => {
+  res.json({
+    sessionID: req.sessionID,
+    session: req.session,
+    cookies: req.headers.cookie,
+  });
+});
 app.use('/images', express.static(path.join(__dirname, '../app/customer/images')));
 
 
