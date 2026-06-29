@@ -37,6 +37,7 @@ exports.viewCart = async (req, res) => {
         let total = 0;
         const converted = cartitems.map(c => {
             const cartObj = c.toObject();
+            console.log("IMAGE TYPE:", typeof cartObj.item.image, JSON.stringify(cartObj.item.image)?.slice(0, 100));
             total += cartObj.item.price * cartObj.quantity;
 
             if (cartObj.item?.image?.data) {
