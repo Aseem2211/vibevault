@@ -29,6 +29,7 @@ exports.addToCart=async(req,res)=>{
         res.status(500).json({message:"Error adding the item"});
     }
 };
+
 exports.viewCart = async (req, res) => {
     try {
         const userId = req.session.user._id;
@@ -36,19 +37,11 @@ exports.viewCart = async (req, res) => {
 
         let total = 0;
         const converted = cartitems.map(c => {
+            total += c.item.price * c.quantity;
             const cartObj = c.toObject();
-            total += cartObj.item.price * cartObj.quantity;
-
-            const img = cartObj.item.image;
-            if (img) {
-                if (Buffer.isBuffer(img)) {
-                    cartObj.item.image = `data:image/jpeg;base64,${img.toString('base64')}`;
-                } else if (img.type === 'Buffer' && Array.isArray(img.data)) {
-                    cartObj.item.image = `data:image/jpeg;base64,${Buffer.from(img.data).toString('base64')}`;
-                } else if (typeof img === 'string' && !img.startsWith('data:')) {
-                    cartObj.item.image = `data:image/jpeg;base64,${img}`;
-                }
-            }
+            cartObj.item.image = c.item.image
+                ? `data:image/jpeg;base64,${c.item.image.toString('base64')}`
+                : null;
             return cartObj;
         });
 
@@ -58,7 +51,6 @@ exports.viewCart = async (req, res) => {
         res.status(500).json({ message: "Error loading the cart" });
     }
 };
-
 exports.removeCart=async(req,res)=>{
     try {
         const cartid=req.params.id;
