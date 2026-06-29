@@ -29,25 +29,28 @@ exports.addToCart=async(req,res)=>{
         res.status(500).json({message:"Error adding the item"});
     }
 };
-exports.viewCart=async(req,res)=>{
-    try{
-        const userId=req.session.user._id;
-        const cartitems=await Cart.find({
-            user:userId
-        }).populate("item");
-        let total=0;
-        cartitems.forEach(items=>{
-            total+=items.item.price*items.quantity;
+exports.viewCart = async (req, res) => {
+    try {
+        const userId = req.session.user._id;
+        const cartitems = await Cart.find({ user: userId }).populate("item");
+
+        let total = 0;
+        const converted = cartitems.map(c => {
+            total += c.item.price * c.quantity;
+            const obj = c.toObject();
+            if (obj.item?.image?.data) {
+                obj.item.image = `data:${obj.item.imageType};base64,${obj.item.image.data.toString('base64')}`;
+            }
+            return obj;
         });
-        res.json({
-            cartitems,
-            total
-        });
-    }catch(err){
+
+        res.json({ cartitems: converted, total });
+    } catch (err) {
         console.log(err);
-        res.status(500).json({message:"Error loading the cart"});
+        res.status(500).json({ message: "Error loading the cart" });
     }
 };
+
 exports.removeCart=async(req,res)=>{
     try {
         const cartid=req.params.id;
