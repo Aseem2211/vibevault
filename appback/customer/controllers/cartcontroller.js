@@ -37,23 +37,27 @@ exports.viewCart = async (req, res) => {
         let total = 0;
         const converted = cartitems.map(c => {
             const cartObj = c.toObject();
-            console.log("IMAGE TYPE:", typeof cartObj.item.image, JSON.stringify(cartObj.item.image)?.slice(0, 100));
             total += cartObj.item.price * cartObj.quantity;
 
-            if (cartObj.item?.image?.data) {
-                const buffer = Buffer.from(cartObj.item.image.data);
-                cartObj.item.image = `data:image/jpeg;base64,${buffer.toString('base64')}`;
+            const img = cartObj.item.image;
+            if (img) {
+                if (Buffer.isBuffer(img)) {
+                    cartObj.item.image = `data:image/jpeg;base64,${img.toString('base64')}`;
+                } else if (img.type === 'Buffer' && Array.isArray(img.data)) {
+                    cartObj.item.image = `data:image/jpeg;base64,${Buffer.from(img.data).toString('base64')}`;
+                } else if (typeof img === 'string' && !img.startsWith('data:')) {
+                    cartObj.item.image = `data:image/jpeg;base64,${img}`;
+                }
             }
             return cartObj;
         });
-        console.log("CONVERTED IMAGE:", converted[0]?.item?.image?.slice(0, 60));
+
         res.json({ cartitems: converted, total });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error loading the cart" });
     }
 };
-
 
 exports.removeCart=async(req,res)=>{
     try {
