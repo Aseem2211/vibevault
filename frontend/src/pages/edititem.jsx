@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { getItemById, updateItem } from "../services/api";
+import { getEditItem, updateItem } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 const CATEGORIES = ["assignment", "furniture", "appliance", "book", "stationary", "snacks"];
@@ -55,7 +55,7 @@ export default function EditItem() {
   ].join(" ");
 
   useEffect(() => {
-    getItemById(id)
+    getEditItem(id)
       .then((res) => {
         const item = res.data.item;
         setFormData({

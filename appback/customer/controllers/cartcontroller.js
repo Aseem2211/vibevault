@@ -33,18 +33,17 @@ exports.viewCart = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const cartitems = await Cart.find({ user: userId }).populate("item");
-        console.log("RAW IMAGE:", JSON.stringify(cartitems[0]?.item?.image)?.slice(0, 200));
+
         let total = 0;
         const converted = cartitems.map(c => {
-            total += c.item.price * c.quantity;
-            const obj = c.toObject();
-            if (obj.item?.image?.data) {
-                const buffer = Buffer.from(obj.item.image.data);
-                console.log("B64 PREFIX:", `data:image/jpeg;base64,${b64}`.slice(0, 100))
-                obj.item.image = `data:image/jpeg;base64,${buffer.toString('base64')}`;
+            const cartObj = c.toObject();
+            total += cartObj.item.price * cartObj.quantity;
+
+            if (cartObj.item?.image?.data) {
+                const buffer = Buffer.from(cartObj.item.image.data);
+                cartObj.item.image = `data:image/jpeg;base64,${buffer.toString('base64')}`;
             }
-            
-            return obj;
+            return cartObj;
         });
 
         res.json({ cartitems: converted, total });
@@ -53,6 +52,7 @@ exports.viewCart = async (req, res) => {
         res.status(500).json({ message: "Error loading the cart" });
     }
 };
+
 
 exports.removeCart=async(req,res)=>{
     try {
