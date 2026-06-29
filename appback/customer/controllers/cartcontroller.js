@@ -39,8 +39,10 @@ exports.viewCart = async (req, res) => {
             total += c.item.price * c.quantity;
             const obj = c.toObject();
             if (obj.item?.image?.data) {
-                obj.item.image = `data:${obj.item.imageType};base64,${obj.item.image.data.toString('base64')}`;
+                const buffer = Buffer.from(obj.item.image.data);
+                obj.item.image = `data:image/jpeg;base64,${buffer.toString('base64')}`;
             }
+            
             return obj;
         });
 
