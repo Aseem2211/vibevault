@@ -33,7 +33,7 @@ exports.viewCart = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const cartitems = await Cart.find({ user: userId }).populate("item");
-
+        console.log("RAW IMAGE:", JSON.stringify(cartitems[0]?.item?.image)?.slice(0, 200));
         let total = 0;
         const converted = cartitems.map(c => {
             total += c.item.price * c.quantity;
