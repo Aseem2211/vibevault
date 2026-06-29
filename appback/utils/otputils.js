@@ -1,7 +1,9 @@
 const nodemailer = require('nodemailer');
 const twilio     = require('twilio');
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host:'smpt.gmail.com',
+    port:587,
+    secure:false,
     family:4,
     auth: {
         user: process.env.EMAIL_USER,   
