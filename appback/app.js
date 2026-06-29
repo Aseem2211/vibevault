@@ -17,7 +17,7 @@ app.options('/{*path}', cors({
 
 const frontrouter=require('./customer/router/frontrouter.js');
 const { sellrouter } = require("./seller/route/sellrouter.js");
-const { default: mongoose } = require('mongoose');
+const mongoose  = require('mongoose');
 const cartrouter = require("./customer/router/cartrouter.js");
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
