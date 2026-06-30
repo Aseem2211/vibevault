@@ -1,18 +1,5 @@
-const nodemailer = require('nodemailer');
+const axios = require('axios');
 const twilio = require('twilio');
-
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-    tls: {
-        rejectUnauthorized: false,
-    },
-});
 
 const twilioClient = twilio(
     process.env.TWILIO_SID,
@@ -25,16 +12,21 @@ exports.generateOTP = () => {
 
 exports.sendEmailOTP = async (toEmail, otp, purpose = 'changepassword') => {
     const isSignup = purpose === 'signup';
-    await transporter.sendMail({
-        from: `"VibeVault" <${process.env.EMAIL_USER}>`,
-        to: toEmail,
+    await axios.post('https://api.brevo.com/v3/smtp/email', {
+        sender: { email: process.env.BREVO_SENDER_EMAIL, name: 'VibeVault' },
+        to: [{ email: toEmail }],
         subject: isSignup ? 'VibeVault - Verify Your Account' : 'VibeVault - OTP for Password Change',
-        html: `
+        htmlContent: `
             <h2>VibeVault</h2>
             <p>Your OTP is: <strong style="font-size:24px">${otp}</strong></p>
             <p>This OTP is valid for 10 minutes.</p>
             <p>If you did not request this, ignore this email.</p>
         `
+    }, {
+        headers: {
+            'api-key': process.env.BREVO_API_KEY,
+            'Content-Type': 'application/json',
+        }
     });
 };
 

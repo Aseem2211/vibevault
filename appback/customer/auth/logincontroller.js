@@ -113,54 +113,60 @@ exports.signupuser=[
     .isMobilePhone()
     .withMessage("Please enter a valid mobile no."),
     
-    
-      
     async(req,res,next)=>{
         console.log(req.body);
         const {name,password,email,address,contactno}=req.body;
         const errors=validationResult(req);
         if(!errors.isEmpty()){
             return res.status(422).json({message:errors.array().map(e=>e.msg)});
-            
         }
         try{
-            const existing =await User.findOne({email});
-            if(existing&&existing.isVerified){
-                return res.status(422).json({
-                    message:"Eamil already registered"
-                });
+            const existingByEmail = await User.findOne({email});
+            const existingByPhone = await User.findOne({contactno});
+
+            if(existingByEmail && existingByEmail.isVerified){
+                return res.status(422).json({message:"Email already registered"});
             }
-            console.log('signup raw password',JSON.stringify(password));
+            if(existingByPhone && existingByPhone.isVerified){
+                return res.status(422).json({message:"Mobile number already registered"});
+            }
+
+            if(existingByPhone && !existingByPhone.isVerified && (!existingByEmail || existingByEmail._id.toString() !== existingByPhone._id.toString())){
+                return res.status(422).json({message:"This mobile number is pending verification on another signup. Please wait or use a different number."});
+            }
+
             const hashedPassword=await bcrypt.hash(password,10);
-            let user=existing;
+            let user=existingByEmail;
             if(user){
                 user.name=name;
                 user.password=hashedPassword;
                 user.address=address;
                 user.contactno=contactno;
-                
             }else{
                 user=new User({name,password:hashedPassword,email,address,contactno});
             }
             await user.save();
             console.log("User saved:", user._id.toString());
             req.session.pendingUserId=user._id.toString();
-            console.log("Session after set:", req.session.pendingUserId);
             req.session.save((err)=>{
                 if(err){
                     return next(err);
                 }
-                res.json({message:"Signup seccessful",redirect:"/sendotp"});
+                res.json({message:"Signup successful",redirect:"/sendotp"});
             });
-                
-            
+
         }catch(err){
-            return res.status(422).json({
-                message:err.message
-               
-            });
+            if (err.code === 11000) {
+                const field = Object.keys(err.keyPattern)[0];
+                return res.status(422).json({
+                    message: `This ${field} is already in use. Please try a different one.`
+                });
+            }
+            return res.status(422).json({message:err.message});
         }
     }
+      
+    
 ];
 
 exports.getChangepassword=(req,res,next)=>{
