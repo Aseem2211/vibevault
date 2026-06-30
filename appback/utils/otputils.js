@@ -1,7 +1,18 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+    tls: {
+        rejectUnauthorized: false,
+    },
+});
 
 const twilioClient = twilio(
     process.env.TWILIO_SID,
@@ -14,8 +25,8 @@ exports.generateOTP = () => {
 
 exports.sendEmailOTP = async (toEmail, otp, purpose = 'changepassword') => {
     const isSignup = purpose === 'signup';
-    await resend.emails.send({
-        from: 'VibeVault <onboarding@resend.dev>',
+    await transporter.sendMail({
+        from: `"VibeVault" <${process.env.EMAIL_USER}>`,
         to: toEmail,
         subject: isSignup ? 'VibeVault - Verify Your Account' : 'VibeVault - OTP for Password Change',
         html: `
