@@ -23,6 +23,7 @@ export default function ProductCard({ item, categoryLabel, onDeleted }) {
   const editBtn = darkMode ? "bg-[#1e2444] text-[#c0caff] hover:bg-[#2a3060]" : "bg-[#E0E4FF] text-[#1A2556] hover:bg-[#c7cdf5]";
   const delBtn  = darkMode ? "bg-[#3a1a1a] text-[#FF9999] hover:bg-[#4d2020]" : "bg-[#FFE5E5] text-[#FF6B6B] hover:bg-[#ffd0d0]";
   const reviewCard = darkMode ? "bg-[#1a1f3a] border-[#2a3060]" : "bg-[#F8F6FF] border-[#E0E4FF]";
+  const imgPanel = darkMode ? "bg-[#1e2444]" : "bg-[#F8F6FF]";
 
   const handleCart = async (e) => {
     e.stopPropagation();
@@ -54,18 +55,18 @@ export default function ProductCard({ item, categoryLabel, onDeleted }) {
 
   return (
     <div onClick={() => navigate("/detailpage/" + item._id)} className="cursor-pointer block">
-      <article className={"rounded-xl border overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row " + card}>
-        <div className="relative w-full md:w-64 h-56 md:h-auto md:h-auto md:min-h-[220px] flex-shrink-0 overflow-hidden">
+      <article className={"rounded-xl border overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 grid gap-6 md:grid-cols-[220px_minmax(0,1fr)] " + card}>
+        <div className={"relative w-full h-56 md:h-auto flex-shrink-0 overflow-hidden rounded-3xl " + imgPanel}>
           <img
             src={item.image}
             alt={item.name || item.section}
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-            onError={(e)=>{e.target.style.display="none";}}
+            onError={(e)=>{e.target.style.display='none';}}
           />
         </div>
 
-        <div className="flex-1 p-6 flex flex-col justify-between">
+        <div className="p-6 flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
