@@ -52,8 +52,11 @@ export default function SellerOrders() {
   };
 
   return (
+    <>
+    <Navbar/>
     <main className={`flex min-h-screen flex-col items-center px-4 py-10 ${dm.page}`}>
-      <Navbar/>
+      
+    
       <div className="w-full max-w-4xl">
         <h1 className={`mb-8 text-4xl font-extrabold ${dm.heading}`}>My received orders</h1>
 
@@ -146,5 +149,6 @@ export default function SellerOrders() {
         )}
       </div>
     </main>
+  </>
   );
 }
