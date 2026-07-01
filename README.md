@@ -118,11 +118,7 @@ npm run dev
 
 ---
 
-## Screenshots
 
-*(Add a few screenshots or a short GIF here — product listing page, seller dashboard, and cart work well)*
-
----
 
 ## Key Challenges & Solutions
 
